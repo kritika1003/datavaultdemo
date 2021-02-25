@@ -1,8 +1,8 @@
 {%- set yaml_metadata -%}
 source_model: 'raw_product'
 derived_columns:
-   PRICE_KEY: 'UNITPRICE'
    RECORD_SOURCE: '!TPCH-PRODUCT'
+   LOAD_DATE    :  CURRENT_TIMESTAMP()
 hashed_columns:
    PRODUCT_PK: 'PRODUCTID'
    SUPPLIER_PK: 'SUPPLIERID'
@@ -28,40 +28,12 @@ hashed_columns:
 {% set hashed_columns = metadata_dict['hashed_columns'] %}
 {%- do log("hashed_columns: " ~ hashed_columns, true) %}
 
-WITH staging AS (
 
-
-
-    {{ dbtvault.stage(include_source_columns=true,
-
-
-
+{{ dbtvault.stage(include_source_columns=true,
                       source_model=source_model,
-
-
-
                       derived_columns=derived_columns,
-
-
-
                       hashed_columns=hashed_columns,
-
-
-
                       ranked_columns=none) }}
 
 
 
-)
-
-
-
-SELECT *,
-
-
-
-       TO_TIMESTAMP('{{ var('LOAD_DATE') }}') AS LOAD_DATE
-
-
-
-FROM staging
